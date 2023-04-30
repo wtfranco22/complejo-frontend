@@ -28,4 +28,7 @@ var anio = new Date().getFullYear();
 </template>
 
 <style scope>
+.container-fluid {
+  border-top: 5px solid #d40c63;
+}
 </style>
