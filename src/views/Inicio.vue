@@ -1,5 +1,3 @@
-<script setup>
-</script>
 <template>
     <div class="container-fluid bg-dark d-flex justify-content-center">
         <div id="carouselExampleCaptions" class="carousel slide col-8 ">
@@ -45,4 +43,3 @@
         </div>
     </div>
 </template>
-<style scoped></style>

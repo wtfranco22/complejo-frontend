@@ -6,9 +6,11 @@ var anio = new Date().getFullYear();
   <div class="container-fluid bg-dark">
     <footer class="d-flex flex-wrap justify-content-between align-items-center p-3">
       <div class="col-8 d-flex align-items-center">
+        <router-link to="/">
         <a href="/" class="me-2">
           <img src="../assets/center.svg" alt="Logo" width="130" height="90">
         </a>
+      </router-link>
         <span class="mt-2 text-muted"><i class="bi bi-cc-circle"></i> {{anio}} Complejo center</span>
       </div>
 
@@ -28,7 +30,7 @@ var anio = new Date().getFullYear();
 </template>
 
 <style scope>
-.container-fluid {
-  border-top: 5px solid #d40c63;
+.container-fluid{
+  border-top: 2px solid #d40c63;
 }
 </style>
