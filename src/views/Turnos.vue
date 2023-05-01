@@ -16,6 +16,8 @@ const formatearFecha = (fechaTurno) => {
     return `Turno para el dia ${day}-${month}-${year}`;
 }
 const buscarFecha = () => {
+    (formateada) ? formateada : formatearFecha;
+    console.log(formateada);
     cargando.value = true;
     setTimeout(() => {
         axios.get(`http://192.168.0.212/api/shifts/${formateada}`)
@@ -25,7 +27,21 @@ const buscarFecha = () => {
                 turnosExito.value = true;
             })
             .catch(error => {
-                console.log(error);
+                if (error.response) {
+                    //el servidor avisa que hubo un error de datos
+                    console.log('llego al servidor pero devolvio error');
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    //se solicita la peticion pero el servidor no responde
+                    console.log('Se envio pero no hubo respuesta');
+                    console.log(error.request);
+                } else {
+                    console.log('Falllo por otra cosa');
+                    console.log('FALLO!', error.message);
+                }
+                console.log(error.config);
                 cargando.value = false;
             });
     }, 2000) //5 seg de espera
@@ -54,7 +70,8 @@ const buscarFecha = () => {
                 </div>
                 <div class="modal-footer">
                     <button :disabled="cargando" disabled type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                        <span v-if="cargando" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span v-if="cargando" class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true"></span>
                         Entendido</button>
                 </div>
             </div>
