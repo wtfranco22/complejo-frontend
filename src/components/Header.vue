@@ -1,6 +1,11 @@
 <script setup>
 import Login from './Login.vue';
 import Register from './Register.vue';
+import { useUserStore } from '../stores/user';
+const usuario = useUserStore();
+const salir = () => {
+  usuario.logout();
+}
 </script>
 
 <template>
@@ -26,17 +31,28 @@ import Register from './Register.vue';
           <router-link to="/Nosotros" class="text-decoration-none">
             <a class="nav-link text-white me-md-2" href="#">Nosotros</a>
           </router-link>
-          <a class="nav-link text-white d-block d-md-none" href="#" data-bs-toggle="modal"
-            data-bs-target="#login">Ingresar</a>
-          <a class="nav-link text-white d-block d-md-none" href="#" data-bs-toggle="modal"
-            data-bs-target="#register">Registrarme</a>
+          <template v-if="usuario.user.token === null">
+            <a class="nav-link text-white d-block d-md-none" href="#" data-bs-toggle="modal"
+              data-bs-target="#login">Ingresar</a>
+            <a class="nav-link text-white d-block d-md-none" href="#" data-bs-toggle="modal"
+              data-bs-target="#register">Registrarme</a>
+          </template>
+          <template v-else>
+            <router-link to="/Perfil" class="text-decoration-none">
+              <a class="nav-link text-white" href="#">Mi cuenta</a>
+            </router-link>
+            <a class="nav-link text-white d-block d-md-none" href="#" @click="salir">Salir</a>
+          </template>
         </div>
       </div>
-      <div class="d-none d-md-block">
+      <div class="d-none d-md-block" v-if="usuario.user.token === null">
         <button type="button" class="btn btn-light border me-3" data-bs-toggle="modal"
           data-bs-target="#login">Ingresar</button>
         <button type="button" class="btn btn-light border" data-bs-toggle="modal"
           data-bs-target="#register">Registrarme</button>
+      </div>
+      <div class="d-none d-md-block" v-else>
+        <button type="button" class="btn btn-light border me-3" @click="salir">Salir</button>
       </div>
     </div>
   </nav>
