@@ -13,6 +13,75 @@ export const useUserStore = defineStore('user', () => {
         token: sessionStorage.getItem('token'),
     });
     const loading = ref(false);
+    const turno = ref({
+        razon: 'payShift',
+        idCancha: null,
+        idHorario: null,
+        descripcion: null,
+        metodo: null,
+        fecha: null,
+        hora: null,
+        precio: 1000,
+    })
+    const pedirTurno = (turn) => {
+        turno.value.idCancha = turn.value.court_id;
+        turno.value.idHorario = turn.value.day_hour;
+        turno.value.descripcion = turn.value.court;
+        turno.value.fecha = turn.value.date
+        turno.value.hora = turn.value.hour
+        router.push('/Pagar-turno');
+    };
+    const pagarTurno = async (formaDePago) => {
+        loading.value = true;
+        turno.value.metodo = formaDePago;
+        await axios({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+                'Authorization': 'Bearer ' + user.value.token
+            },
+            method: 'POST',
+            url: 'http://127.0.0.1:80/api/payments',
+            data: {
+                date: turno.value.fecha,
+                reason: turno.value.razon,
+                method: turno.value.metodo,
+                day_hour_id: turno.value.idHorario,
+                court_id: turno.value.idCancha,
+                price: turno.value.precio
+            }
+        })
+            .then(response => {
+                if (response.data.status) {
+                    console.log(response.data);
+                } else {
+                    console.log(response.data);
+                }
+                loading.value = false;
+            })
+            .catch(error => {
+                if (error.response) {
+                    //el servidor avisa que hubo un error de datos
+                    console.log('llego al servidor pero devolvio error');
+                    console.log('Data', error.response.data);
+                    console.log('Status', error.response.status);
+                    console.log('Headers', error.response.headers);
+                } else if (error.request) {
+                    //se solicita la peticion pero el servidor no responde
+                    console.log('Se envio pero no hubo respuesta');
+                    console.log('Request', error.request);
+                } else {
+                    console.log('Falllo por otra cosa');
+                    console.log('message!', error.message);
+                }
+                console.log(error.config);
+                loading.value = false;
+            });
+
+    };
     const login = async (usuario) => {
         loading.value = true;
         await axios({
@@ -144,8 +213,11 @@ export const useUserStore = defineStore('user', () => {
     return {
         user,
         loading,
+        turno,
         login,
         logout,
         getUser,
+        pedirTurno,
+        pagarTurno,
     };
 });
