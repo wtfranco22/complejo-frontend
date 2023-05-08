@@ -7,8 +7,7 @@ var user = {
 }
 const ingresar = async () => {
     if (user.correo && user.contrasenia) {
-        await usuario.login(user);
-        if (usuario.user.token!==null) {
+        if(await usuario.login(user)){
             bootstrap.Modal.getInstance(document.getElementById('login')).hide(); //boorar modal
         } else {
             alert('Datos incorrectos');

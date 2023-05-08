@@ -26,7 +26,15 @@ router.beforeEach((to, from, next) => {
     if (rutaProtegida && auth.user.token === null) {
         next('/');
     } else {
-        next();
+        if((to.href).toLowerCase()=='/pagar-turno'){
+            if(from.href && (from.href).toLowerCase()=='/turnos'){
+                next();
+            }else{
+                next('/turnos');
+            }
+        }else{
+            next();
+        }
     }
 })
 

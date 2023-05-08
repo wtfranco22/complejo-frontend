@@ -14,14 +14,7 @@ const pagar = async () => {
 }
 </script>
 <template>
-    <div v-if="user.loading.value">
-        <div class="d-flex justify-content-center">
-            <div class="spinner-border text-danger m-5" style="width: 9rem; height: 9rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    </div>
-    <div v-else class="container my-5">
+    <div class="container my-5">
         <div class="row">
             <div class="col text-center">
                 Fecha y hora

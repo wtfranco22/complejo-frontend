@@ -7,6 +7,8 @@ const mostrar = (valor) => {
 }
 const user = useUserStore();
 user.getUser();
+user.getShifts();
+user.getPayments();
 </script>
 
 <template>
@@ -83,18 +85,59 @@ user.getUser();
                     {{ user.user.token }}
                 </div>
             </div>
-            <div v-else-if="detalles == 'Pagos'" class="row">
-                <div class="col">
-                    Dia 12-3-2023
-                </div>
-                <div class="col">
-                    cod: 0012, a las 20:00hs en la cancha 1
-                </div>
+            <div v-else-if="detalles == 'Turnos'">
+                <template v-for="turno in user.shifts" :key="turno.id">
+                    <div class="row">
+                        <div class="col">
+                            Fecha y hora del turno:
+                        </div>
+                        <div class="col">
+                            {{ turno.date }}
+                        </div>
+                        <div class="col">
+                            Precio pagado por el turno:
+                        </div>
+                        <div class="col">
+                            ${{ turno.price }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Cancha del turno:
+                        </div>
+                        <div class="col">
+                            {{ turno.court_id }}
+                        </div>
+                        <div class="col">
+                            Dia del turno pagado:
+                        </div>
+                        <div class="col">
+                            {{ turno.updated_at }}
+                        </div>
+                    </div>
+                    <hr><hr>
+                </template>
             </div>
-            <div v-else-if="detalles == 'Turnos'" class="row">
-                <div class="col">
-                    turnitos
-                </div>
+            <div v-else-if="detalles == 'Pagos'" class="row">
+                <template v-for="pago in user.payments" :key="pago.id">
+                    <div class="row">
+                        <div class="col">
+                            Fecha y hora del pago:
+                            {{ pago.updated_at }}
+                        </div>
+                        <div class="col">
+                            Metodo de pago:
+                            {{ pago.method }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Descripcion del pago: 
+                            {{ pago.description }}:
+                        </div>
+                    </div>
+                    <hr><hr>
+                </template>
             </div>
         </div>
     </div>

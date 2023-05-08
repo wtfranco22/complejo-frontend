@@ -12,6 +12,8 @@ export const useUserStore = defineStore('user', () => {
         role: '',
         token: sessionStorage.getItem('token'),
     });
+    const shifts = ref([]);
+    const payments = ref([]);
     const loading = ref(false);
     const turno = ref({
         razon: 'payShift',
@@ -83,6 +85,7 @@ export const useUserStore = defineStore('user', () => {
 
     };
     const login = async (usuario) => {
+        var acceso = false;
         loading.value = true;
         await axios({
             headers: {
@@ -101,6 +104,7 @@ export const useUserStore = defineStore('user', () => {
         })
             .then(response => {
                 if (response.data.status) {
+                    acceso = true;
                     user.value.token = response.data.access_token;
                     sessionStorage.setItem('token', user.value.token);
                 }
@@ -124,6 +128,7 @@ export const useUserStore = defineStore('user', () => {
                 console.log(error.config);
                 loading.value = false;
             });
+            return acceso;
     };
     const getUser = async () => {
         loading.value = true;
@@ -146,6 +151,84 @@ export const useUserStore = defineStore('user', () => {
                     user.value.email = response.data.user.email;
                     user.value.phone = response.data.user.phone;
                     user.value.role = response.data.role;
+                }
+                loading.value = false;
+            })
+            .catch(error => {
+                if (error.response) {
+                    //el servidor avisa que hubo un error de datos
+                    console.log('llego al servidor pero devolvio error');
+                    console.log('Data', error.response.data);
+                    console.log('Status', error.response.status);
+                    console.log('Headers', error.response.headers);
+                } else if (error.request) {
+                    //se solicita la peticion pero el servidor no responde
+                    console.log('Se envio pero no hubo respuesta');
+                    console.log('Request', error.request);
+                } else {
+                    console.log('Falllo por otra cosa');
+                    console.log('message!', error.message);
+                }
+                console.log(error.config);
+                loading.value = false;
+            });
+    };
+    const getShifts = async () => {
+        loading.value = true;
+        await axios({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+                'Authorization': 'Bearer ' + user.value.token
+            },
+            method: 'GET',
+            url: 'http://127.0.0.1:80/api/my-shifts',
+        })
+            .then(response => {
+                if (response.data.status) {
+                    shifts.value =response.data.Shifts;
+                }
+                loading.value = false;
+            })
+            .catch(error => {
+                if (error.response) {
+                    //el servidor avisa que hubo un error de datos
+                    console.log('llego al servidor pero devolvio error');
+                    console.log('Data', error.response.data);
+                    console.log('Status', error.response.status);
+                    console.log('Headers', error.response.headers);
+                } else if (error.request) {
+                    //se solicita la peticion pero el servidor no responde
+                    console.log('Se envio pero no hubo respuesta');
+                    console.log('Request', error.request);
+                } else {
+                    console.log('Falllo por otra cosa');
+                    console.log('message!', error.message);
+                }
+                console.log(error.config);
+                loading.value = false;
+            });
+    };
+    const getPayments = async () => {
+        loading.value = true;
+        await axios({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+                'Authorization': 'Bearer ' + user.value.token
+            },
+            method: 'GET',
+            url: 'http://127.0.0.1:80/api/my-payments',
+        })
+            .then(response => {
+                if (response.data.status) {
+                    payments.value =response.data.Payments;
                 }
                 loading.value = false;
             })
@@ -214,9 +297,13 @@ export const useUserStore = defineStore('user', () => {
         user,
         loading,
         turno,
+        shifts,
+        payments,
         login,
         logout,
         getUser,
+        getShifts,
+        getPayments,
         pedirTurno,
         pagarTurno,
     };
