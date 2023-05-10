@@ -4,6 +4,7 @@ import Nosotros from '@/views/Nosotros.vue';
 import Turnos from '@/views/Turnos.vue';
 import Perfil from '@/views/Perfil.vue';
 import Pago from '@/views/Pago.vue';
+import Verificacion from '@/views/Verificacion.vue'
 import { useUserStore } from '@/stores/user';
 
 const routes = [
@@ -11,7 +12,8 @@ const routes = [
     { path: '/Nosotros', name: 'Nosotros', component: Nosotros },
     { path: '/Turnos', name: 'Turnos', component: Turnos },
     { path: '/Pagar-turno', name: 'Pago', component: Pago, meta: { withAuth: true } },
-    { path: '/Perfil', name: 'Perfil', component: Perfil, meta: { withAuth: true } }
+    { path: '/Perfil', name: 'Perfil', component: Perfil, meta: { withAuth: true } },
+    { path: '/api/email/verify/:id/:hash/:pathMatch(.*)*',  name: 'Verificacion', component: Verificacion}
     // { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 

@@ -2,6 +2,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import router from '../routes';
+import { useRoute } from 'vue-router';
 
 export const useUserStore = defineStore('user', () => {
     const user = ref({
@@ -128,7 +129,7 @@ export const useUserStore = defineStore('user', () => {
                 console.log(error.config);
                 loading.value = false;
             });
-            return acceso;
+        return acceso;
     };
     const getUser = async () => {
         loading.value = true;
@@ -189,7 +190,7 @@ export const useUserStore = defineStore('user', () => {
         })
             .then(response => {
                 if (response.data.status) {
-                    shifts.value =response.data.Shifts;
+                    shifts.value = response.data.Shifts;
                 }
                 loading.value = false;
             })
@@ -228,7 +229,7 @@ export const useUserStore = defineStore('user', () => {
         })
             .then(response => {
                 if (response.data.status) {
-                    payments.value =response.data.Payments;
+                    payments.value = response.data.Payments;
                 }
                 loading.value = false;
             })
@@ -293,6 +294,100 @@ export const useUserStore = defineStore('user', () => {
                 loading.value = false;
             });
     };
+    const registerUser = async (usuario) => {
+        var registrado = false;
+        loading.value = true;
+        await axios({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+            },
+            method: 'POST',
+            url: 'http://127.0.0.1:80/api/register',
+            data: {
+                name: usuario.nombre,
+                lastname: usuario.apellido,
+                dni: usuario.documento,
+                email: usuario.correo,
+                phone: usuario.celular,
+                password: usuario.contrasenia,
+                password_confirmation: usuario.contrasenia2
+            }
+        })
+            .then(response => {
+                if (response.data.status) {
+                    registrado = true;
+                }
+                loading.value = false;
+            })
+            .catch(error => {
+                if (error.response) {
+                    //el servidor avisa que hubo un error de datos
+                    console.log('llego al servidor pero devolvio error');
+                    console.log('Data', error.response.data);
+                    console.log('Status', error.response.status);
+                    console.log('Headers', error.response.headers);
+                } else if (error.request) {
+                    //se solicita la peticion pero el servidor no responde
+                    console.log('Se envio pero no hubo respuesta');
+                    console.log('Request', error.request);
+                } else {
+                    console.log('Falllo por otra cosa');
+                    console.log('message!', error.message);
+                }
+                console.log(error.config);
+                loading.value = false;
+            });
+        return registrado;
+    }
+    const userValidate = async () => {
+        loading.value = true;
+        var validado = false;
+        const ruta = useRoute();
+        const idUser = ruta.params.id;
+        const hashUser = ruta.params.hash;
+        const expiraLiink = ruta.query.expires;
+        const firmaLaravel = ruta.query.signature;
+        await axios({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+            },
+            method: 'GET',
+            url: `http://127.0.0.1:80/api/email/verify/${idUser}/${hashUser}?expires=${expiraLiink}&signature=${firmaLaravel}`,
+        })
+            .then(response => {
+                if (response.data.status) {
+                    validado = true;
+                }
+                loading.value = false;
+            })
+            .catch(error => {
+                if (error.response) {
+                    //el servidor avisa que hubo un error de datos
+                    console.log('llego al servidor pero devolvio error');
+                    console.log('Data', error.response.data);
+                    console.log('Status', error.response.status);
+                    console.log('Headers', error.response.headers);
+                } else if (error.request) {
+                    //se solicita la peticion pero el servidor no responde
+                    console.log('Se envio pero no hubo respuesta');
+                    console.log('Request', error.request);
+                } else {
+                    console.log('Falllo por otra cosa');
+                    console.log('message!', error.message);
+                }
+                console.log(error.config);
+                loading.value = false;
+            });
+        return validado;
+    }
     return {
         user,
         loading,
@@ -306,5 +401,7 @@ export const useUserStore = defineStore('user', () => {
         getPayments,
         pedirTurno,
         pagarTurno,
+        registerUser,
+        userValidate
     };
 });
